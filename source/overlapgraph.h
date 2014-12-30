@@ -1,3 +1,5 @@
+#include<vector>
+#include<string>
 
 struct overlap
 {
@@ -10,5 +12,12 @@ struct overlap
 
 class OverlapGraph
 {
-	
+	private:
+		std::vector<std::string> reads;
+		std::vector<overlap> overlaps;
+		std::vector< std::vector<overlap> > graph;
+		void initialize();
+	public:
+		OverlapGraph(std::vector<std::string> reads, std::vector<overlap> overlaps);
+		void runUnitigging();
 };
