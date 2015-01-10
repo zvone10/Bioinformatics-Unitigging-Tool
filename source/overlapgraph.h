@@ -10,6 +10,11 @@ struct overlap
 	int bhg;
 };
 
+class Chunk{
+	public: 
+		std::vector< std::vector<overlap> > members;
+};
+
 class OverlapGraph
 {
 	private:
@@ -18,6 +23,7 @@ class OverlapGraph
 		std::vector<int> nonContainedReads;
 		std::vector< std::vector<overlap> > graph;
 		std::vector< std::vector<overlap> > reducedGraph;
+		std::vector< Chunk > collapsedReducedGraph;
 		void initialize();
 		void containedReadRemoval();
 		void transitiveEdgeRemoval();
