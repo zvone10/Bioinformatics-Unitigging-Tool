@@ -108,7 +108,6 @@ void OverlapGraph::runUnitigging()
 			if (vertexstatus[graph[I][j].read2] == VERTEX_ELIMINATED)
 			{
 				reduceflags[I][j] = true;
-				//cout << "removed: " << graph[I][j].read1 + 1 << "->" << graph[I][j].read2 + 1 << endl;
 			}
 			vertexstatus[graph[I][j].read2] == VERTEX_INACTIVE;
 		}
@@ -124,7 +123,88 @@ void OverlapGraph::runUnitigging()
 			}
         }
     }
+	uniqueJoinCollapsing();
 
 	free(vertexstatus);
 	return;
+}
+
+
+void OverlapGraph::uniqueJoinCollapsing(){
+
+	reducedGraphVertexReferenceCounter.assign(reducedGraph.size(), 0);
+
+	// Calculate references to vertexes
+	for (int i = 0; i < reducedGraph.size(); i++){
+		for (int j = 0; j < reducedGraph[i].size(); j++){
+			reducedGraphVertexReferenceCounter[reducedGraph[i][j].read2]++;
+		}
+	}
+
+	// Find first "juncture" vertex
+	int startingVertex = 0;
+	bool startingVertexFound = false;
+	while (startingVertex < reducedGraph.size()){
+		if (reducedGraph[startingVertex].size() > 0){
+			startingVertexFound = true;
+			break;
+		}
+		startingVertex++;
+	}
+	if (startingVertexFound){
+		calculateChunks(startingVertex, 0);
+	}
+}
+
+void OverlapGraph::calculateChunks(int chunkStartingVertexId, int requestedChunkId){
+	
+	int currentVertexId = chunkStartingVertexId;
+
+	if (vertexAlreadyInChunk(currentVertexId)){
+		return;
+	}
+
+	// create new chunk
+	Chunk chunk;
+	chunk.id = requestedChunkId;
+
+	while (true){
+		if (reducedGraphVertexReferenceCounter[currentVertexId] > 1 && currentVertexId != chunkStartingVertexId){
+			// special case: juncture vertex (not part of our chunk)
+			calculateChunks(currentVertexId, requestedChunkId + 1);
+			break;
+		}
+
+		chunk.members.push_back(currentVertexId);
+
+		if (reducedGraph[currentVertexId].size() < 1){
+			// dead end
+			break;
+		}
+
+		if (reducedGraph[currentVertexId].size() > 1){
+			// juncture point - each path vertex represents a new chunk start
+			for (int i = 0; i < reducedGraph[currentVertexId].size(); i++){
+				calculateChunks(reducedGraph[currentVertexId][i].read2, requestedChunkId + i + 1);
+			}
+			break;
+		}
+
+		currentVertexId = reducedGraph[currentVertexId][0].read2;
+	}
+	collapsedReducedGraph.push_back(chunk);
+
+	return;
+}
+
+
+bool OverlapGraph::vertexAlreadyInChunk(int vertexId){
+	for (int i = 0; i < collapsedReducedGraph.size(); ++i){
+		for (int j = 0; j < collapsedReducedGraph[i].members.size(); ++j){
+			if (vertexId == collapsedReducedGraph[i].members[j]){
+				return true;
+			}
+		}
+	}
+	return false;
 }
