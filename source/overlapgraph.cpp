@@ -20,6 +20,7 @@ OverlapGraph::OverlapGraph(std::vector<std::string> readvector, std::vector<over
 void OverlapGraph::initialize()
 {
 	graph.resize(reads.size());
+	reducedGraph.resize(reads.size());
 	nonContainedReads.resize(reads.size());
 	nonContainedReads.assign(reads.size(), 1);
 
@@ -117,8 +118,10 @@ void OverlapGraph::runUnitigging()
     {
         for(int j=0;j<graph[i].size();j++)
         {
-			if (!reduceflags[i][j] & nonContainedReads[graph[i][j].read1] & nonContainedReads[graph[i][j].read2])
-                cout << graph[i][j].read1 << " -> " << graph[i][j].read2 << endl;
+			if (!reduceflags[i][j] & nonContainedReads[graph[i][j].read1] & nonContainedReads[graph[i][j].read2]){
+				// Add edge to the reduced graph
+				reducedGraph[i].push_back(graph[i][j]);
+			}
         }
     }
 

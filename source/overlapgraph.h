@@ -17,6 +17,7 @@ class OverlapGraph
 		std::vector<overlap> overlaps;
 		std::vector<int> nonContainedReads;
 		std::vector< std::vector<overlap> > graph;
+		std::vector< std::vector<overlap> > reducedGraph;
 		void initialize();
 		void containedReadRemoval();
 		void transitiveEdgeRemoval();
