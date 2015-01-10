@@ -15,6 +15,7 @@ class OverlapGraph
 	private:
 		std::vector<std::string> reads;
 		std::vector<overlap> overlaps;
+		std::vector<int> nonContainedReads;
 		std::vector< std::vector<overlap> > graph;
 		void initialize();
 		void containedReadRemoval();
