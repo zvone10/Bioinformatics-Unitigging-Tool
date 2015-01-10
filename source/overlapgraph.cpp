@@ -152,11 +152,11 @@ void OverlapGraph::uniqueJoinCollapsing(){
 		startingVertex++;
 	}
 	if (startingVertexFound){
-		calculateChunks(startingVertex, 0);
+		calculateChunks(startingVertex);
 	}
 }
 
-void OverlapGraph::calculateChunks(int chunkStartingVertexId, int requestedChunkId){
+void OverlapGraph::calculateChunks(int chunkStartingVertexId){
 	
 	int currentVertexId = chunkStartingVertexId;
 
@@ -166,12 +166,11 @@ void OverlapGraph::calculateChunks(int chunkStartingVertexId, int requestedChunk
 
 	// create new chunk
 	Chunk chunk;
-	chunk.id = requestedChunkId;
 
 	while (true){
 		if (reducedGraphVertexReferenceCounter[currentVertexId] > 1 && currentVertexId != chunkStartingVertexId){
 			// special case: juncture vertex (not part of our chunk)
-			calculateChunks(currentVertexId, requestedChunkId + 1);
+			calculateChunks(currentVertexId);
 			break;
 		}
 
@@ -185,7 +184,7 @@ void OverlapGraph::calculateChunks(int chunkStartingVertexId, int requestedChunk
 		if (reducedGraph[currentVertexId].size() > 1){
 			// juncture point - each path vertex represents a new chunk start
 			for (int i = 0; i < reducedGraph[currentVertexId].size(); i++){
-				calculateChunks(reducedGraph[currentVertexId][i].read2, requestedChunkId + i + 1);
+				calculateChunks(reducedGraph[currentVertexId][i].read2);
 			}
 			break;
 		}

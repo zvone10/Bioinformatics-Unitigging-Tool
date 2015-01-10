@@ -12,7 +12,6 @@ struct overlap
 
 class Chunk{
 	public: 
-		int id;
 		std::vector< int > members;
 };
 
@@ -30,7 +29,7 @@ class OverlapGraph
 		void containedReadRemoval();
 		void transitiveEdgeRemoval();
 		void uniqueJoinCollapsing();
-		void calculateChunks(int chunkStartingVertexId, int requestedChunkId);
+		void calculateChunks(int chunkStartingVertexId);
 		bool vertexAlreadyInChunk(int vertexId);
 	public:
 		OverlapGraph(std::vector<std::string> reads, std::vector<overlap> overlaps);
