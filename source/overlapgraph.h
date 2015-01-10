@@ -12,7 +12,8 @@ struct overlap
 
 class Chunk{
 	public: 
-		std::vector< std::vector<overlap> > members;
+		int id;
+		std::vector< int > members;
 };
 
 class OverlapGraph
