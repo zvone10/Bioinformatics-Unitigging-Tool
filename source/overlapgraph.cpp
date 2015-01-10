@@ -92,6 +92,19 @@ void OverlapGraph::runUnitigging()
 
 		for (int j = 0; j < graph[I].size(); j++)
 		{
+			int x = graph[I][j].read2;
+			for (int k = 0; k < graph[x].size(); k++)
+			{
+				if (graph[x][k].bhg < FUZZ)
+				{
+					if (vertexstatus[graph[x][k].read2] == VERTEX_ACTIVE)
+						vertexstatus[graph[x][k].read2] = VERTEX_ELIMINATED;
+				}
+			}
+		}
+
+		for (int j = 0; j < graph[I].size(); j++)
+		{
 			if (vertexstatus[graph[I][j].read2] == VERTEX_ELIMINATED)
 			{
 				reduceflags[I][j] = true;
