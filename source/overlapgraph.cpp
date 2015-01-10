@@ -21,7 +21,7 @@ OverlapGraph::OverlapGraph(std::vector<std::string> readvector, std::vector<over
 void OverlapGraph::initialize()
 {
 	graph.resize(reads.size());
-
+	nonContainedReads.resize(reads.size());
 	for(int i=0;i<overlaps.size();i++)
 	{
 		overlap o = overlaps[i];
@@ -36,8 +36,6 @@ void OverlapGraph::initialize()
 void OverlapGraph::runUnitigging()
 {
 	int N = reads.size();
-	int *noncontainedreads = (int *)malloc(N*sizeof(int));
-	memset(noncontainedreads, 0, N*sizeof(noncontainedreads));
 
 	//removing contained reads
 	for (int i = 0; i < N; i++)
@@ -45,8 +43,8 @@ void OverlapGraph::runUnitigging()
 		for (int j = 0; j < graph[i].size(); j++)
 		{
 			overlap o = graph[i][j];
-			noncontainedreads[o.read1] = 1;
-			noncontainedreads[o.read2] = 1;
+			nonContainedReads[o.read1] = 1;
+			nonContainedReads[o.read2] = 1;
 		}
 	}
 
@@ -107,12 +105,11 @@ void OverlapGraph::runUnitigging()
     {
         for(int j=0;j<graph[i].size();j++)
         {
-            if(!reduceflags[i][j] & noncontainedreads[graph[i][j].read1])
+			if (!reduceflags[i][j] & nonContainedReads[graph[i][j].read1])
                 cout << graph[i][j].read1 << " -> " << graph[i][j].read2 << endl;
         }
     }
 
-	free(noncontainedreads);
 	free(vertexstatus);
 	return;
 }
