@@ -15,39 +15,37 @@ OverlapGraph::OverlapGraph(std::vector<std::string> readvector, std::vector<over
 {
 	reads = readvector;
 	overlaps = overlapvector;
-	initialize();
 }
 
 void OverlapGraph::initialize()
 {
 	graph.resize(reads.size());
+	nonContainedReads.resize(reads.size());
+	nonContainedReads.assign(reads.size(), 1);
+
 	for(int i=0;i<overlaps.size();i++)
 	{
 		overlap o = overlaps[i];
 
+
+		//removing contained reads
 		if(o.ahg > 0 & o.bhg > 0)
 			graph[o.read1].push_back(o);
-		else if(o.ahg < 0 & o.bhg < 0)
+		else if (o.ahg < 0 & o.bhg < 0)
 			graph[o.read2].push_back(o);
+		else if (o.ahg > 0 & o.bhg < 0)
+			nonContainedReads[o.read2] = 0;
+		else if (o.ahg < 0 & o.bhg>0)
+			nonContainedReads[o.read1] = 0;
 	}
 }
 
 void OverlapGraph::runUnitigging()
 {
 	int N = reads.size();
-	int *nonContainedReads = (int *)malloc(N*sizeof(int));
-	memset(nonContainedReads, 0, N*sizeof(nonContainedReads));
 
-	//removing contained reads
-	for (int i = 0; i < N; i++)
-	{
-		for (int j = 0; j < graph[i].size(); j++)
-		{
-			overlap o = graph[i][j];
-			nonContainedReads[o.read1] = 1;
-			nonContainedReads[o.read2] = 1;
-		}
-	}
+	
+	initialize();
 
 	int *vertexstatus = (int *)malloc(N*sizeof(int));
 	memset(vertexstatus, VERTEX_INACTIVE, N*sizeof(int));
@@ -93,6 +91,19 @@ void OverlapGraph::runUnitigging()
 
 		for (int j = 0; j < graph[I].size(); j++)
 		{
+			int x = graph[I][j].read2;
+			for (int k = 0; k < graph[x].size(); k++)
+			{
+				if (graph[x][k].bhg < FUZZ)
+				{
+					if (vertexstatus[graph[x][k].read2] == VERTEX_ACTIVE)
+						vertexstatus[graph[x][k].read2] = VERTEX_ELIMINATED;
+				}
+			}
+		}
+
+		for (int j = 0; j < graph[I].size(); j++)
+		{
 			if (vertexstatus[graph[I][j].read2] == VERTEX_ELIMINATED)
 			{
 				reduceflags[I][j] = true;
@@ -106,12 +117,11 @@ void OverlapGraph::runUnitigging()
     {
         for(int j=0;j<graph[i].size();j++)
         {
-			if (!reduceflags[i][j] & nonContainedReads[graph[i][j].read1])
+			if (!reduceflags[i][j] & nonContainedReads[graph[i][j].read1] & nonContainedReads[graph[i][j].read2])
                 cout << graph[i][j].read1 << " -> " << graph[i][j].read2 << endl;
         }
     }
 
 	free(vertexstatus);
-	free(nonContainedReads);
 	return;
 }
