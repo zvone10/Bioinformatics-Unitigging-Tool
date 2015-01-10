@@ -17,6 +17,9 @@ class OverlapGraph
 		std::vector<overlap> overlaps;
 		std::vector< std::vector<overlap> > graph;
 		void initialize();
+		void containedReadRemoval();
+		void transitiveEdgeRemoval();
+		void uniqueJoinCollapsing();
 	public:
 		OverlapGraph(std::vector<std::string> reads, std::vector<overlap> overlaps);
 		void runUnitigging();
