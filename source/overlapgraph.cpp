@@ -130,6 +130,10 @@ void OverlapGraph::runUnitigging()
 	return;
 }
 
+void OverlapGraph::printLayouts()
+{
+	
+}
 
 void OverlapGraph::uniqueJoinCollapsing(){
 
