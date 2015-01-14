@@ -143,6 +143,9 @@ void OverlapGraph::printLayouts()
 		for (int j = 0; j < graph[i].size(); j++)
 		{
 			overlap o = graph[i][j];
+			if (nonContainedReads[o.read1] & nonContainedReads[o.read2]) {
+				offsets[o.read2] = offsets[o.read1] + o.ahg;
+			}
 		}
 	}
 }
