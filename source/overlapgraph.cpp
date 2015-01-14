@@ -2,6 +2,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <string.h>
+#include <fstream>
 #include "overlapgraph.h"
 
 #define VERTEX_INACTIVE 0
@@ -132,7 +133,10 @@ void OverlapGraph::runUnitigging()
 
 void OverlapGraph::printLayouts()
 {
-	
+	ofstream output("layouts.afg");
+	int *offsets = (int *)malloc(reads.size()*sizeof(int));
+	memset(offsets, 0, reads.size()*sizeof(int));
+
 }
 
 void OverlapGraph::uniqueJoinCollapsing(){
