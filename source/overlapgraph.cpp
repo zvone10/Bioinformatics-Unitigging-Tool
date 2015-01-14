@@ -12,6 +12,10 @@
 
 using namespace std;
 
+
+/*
+Constructor for OverlapGraph class.
+*/
 OverlapGraph::OverlapGraph(std::vector<std::string> readvector, std::vector<overlap> overlapvector)
 {
 	reads = readvector;
@@ -40,8 +44,31 @@ void OverlapGraph::initialize()
 		else if (o.ahg <= 0 & o.bhg>=0)
 			nonContainedReads[o.read1] = 0;
 	}
+
+	int *indegree = (int *)malloc(reads.size()*sizeof(int));
+	memset(indegree, 0, reads.size()*sizeof(int));
+	for (int i = 0; i < graph.size(); i++)
+	{
+		for (int j = 0; j < graph[i].size(); j++)
+		{
+			indegree[graph[i][j].read2]++;
+		}
+	}
+
+	for (int i = 0; i < reads.size(); i++)
+	{
+		if (indegree[i] == 0 & graph[i].size() == 0)
+			nonContainedReads[i] = 0;
+	}
+
+	free(indegree);
 }
 
+/*
+Method that runs untigging after contained reads are eliminated. (Contained reads are marked as eliminated
+while graph was being initialized.
+)
+*/
 void OverlapGraph::runUnitigging()
 {
 	int N = reads.size();
@@ -125,15 +152,42 @@ void OverlapGraph::runUnitigging()
 			}
         }
     }
+
 	uniqueJoinCollapsing();
 
 	free(vertexstatus);
 	return;
 }
 
+void OverlapGraph::unitigsPrinting()
+{
+	ofstream output("unitigsPrinting.afg");
+	
+	int counter = 1;
+
+	output << "{unitigs" << endl;
+
+	for (Chunk c : collapsedReducedGraph)
+	{
+		output << "{" << "unitig" << endl;
+		output << "id: " << counter << endl;
+		output << "members: ";
+		for (int a : c.members)
+		{
+			output << a << ",";
+		}
+
+		output << endl;
+		output << "}" << endl;
+	}
+
+	output << "}" << endl;
+}
+
 void OverlapGraph::printLayouts()
 {
 	ofstream output("layouts.afg");
+	ofstream pretty("pretty.afg");
 	int *offsets = (int *)malloc(reads.size()*sizeof(int));
 	memset(offsets, 0, reads.size()*sizeof(int));
 
@@ -159,6 +213,10 @@ void OverlapGraph::printLayouts()
 			output << "off:" << offsets[i] << endl;
 			output << "src:" << i + 1 << endl;
 			output << "}" << endl;
+
+			pretty << string(offsets[i], ' ') + reads[i] << endl;
+			//pretty <<reads[i] << endl;
+
 		}
 	}
 

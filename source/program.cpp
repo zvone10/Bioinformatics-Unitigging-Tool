@@ -33,6 +33,9 @@ std::vector<std::string> split(std::string input, char splitChar)
 	return substrings;
 }
 
+/*
+Method that loads reads from FASTA file which is produced with ReadSim and 
+*/
 void loadReads()
 {
 	ifstream readsMap(path + "/reads.bnk/RED.0.map");
@@ -65,6 +68,10 @@ void loadReads()
 	}
 }
 
+/*
+Method loads overlaps from file overlaps.afg, which is produced by Minimus. Target file is in afg format
+and collection of overlaps is populated.
+*/
 void loadoverlaps()
 {
 	std::string overlapsfile = path + "/overlaps.afg";
@@ -100,6 +107,9 @@ void loadoverlaps()
 	}
 }
 
+/*
+Entry  point of program. Program recieves as argument path to folder where output from Minimus is located.
+*/
 int main(int argc, char *argv[])
 {
 	path = argv[1];
@@ -111,6 +121,6 @@ int main(int argc, char *argv[])
 
 	OverlapGraph overlapGraph(reads, overlaps);
 	overlapGraph.runUnitigging();
-
 	overlapGraph.printLayouts();
+	overlapGraph.unitigsPrinting();
 }
