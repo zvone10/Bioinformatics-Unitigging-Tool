@@ -35,9 +35,9 @@ void OverlapGraph::initialize()
 			graph[o.read1].push_back(o);
 		else if (o.ahg < 0 & o.bhg < 0)
 			graph[o.read2].push_back(o);
-		else if (o.ahg > 0 & o.bhg < 0)
+		else if (o.ahg >= 0 & o.bhg <= 0)
 			nonContainedReads[o.read2] = 0;
-		else if (o.ahg < 0 & o.bhg>0)
+		else if (o.ahg <= 0 & o.bhg>=0)
 			nonContainedReads[o.read1] = 0;
 	}
 }
@@ -163,6 +163,7 @@ void OverlapGraph::printLayouts()
 	}
 
 	output << "}" << endl;
+	output.close();
 
 	free(offsets);
 }

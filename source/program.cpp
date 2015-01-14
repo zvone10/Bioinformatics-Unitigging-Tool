@@ -112,4 +112,5 @@ int main(int argc, char *argv[])
 	OverlapGraph overlapGraph(reads, overlaps);
 	overlapGraph.runUnitigging();
 
+	overlapGraph.printLayouts();
 }

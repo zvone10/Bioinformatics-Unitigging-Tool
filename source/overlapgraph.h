@@ -31,8 +31,8 @@ class OverlapGraph
 		void uniqueJoinCollapsing();
 		void calculateChunks(int chunkStartingVertexId);
 		bool vertexAlreadyInChunk(int vertexId);
-		void printLayouts();
 	public:
 		OverlapGraph(std::vector<std::string> reads, std::vector<overlap> overlaps);
 		void runUnitigging();
+		void printLayouts();
 };
