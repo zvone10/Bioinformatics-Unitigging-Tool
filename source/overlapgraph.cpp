@@ -120,6 +120,7 @@ void OverlapGraph::runUnitigging()
 			if (!reduceflags[i][j] & nonContainedReads[graph[i][j].read1] & nonContainedReads[graph[i][j].read2]){
 				// Add edge to the reduced graph
 				reducedGraph[i].push_back(graph[i][j]);
+				cout << graph[i][j].read1 << " -> " << graph[i][j].read2 << endl;
 			}
         }
     }
