@@ -33,24 +33,10 @@ std::vector<std::string> split(std::string input, char splitChar)
 	return substrings;
 }
 
-int main(int argc, char *argv[])
+void loadReads()
 {
-	path = argv[1];
-
-	std::string readsfile = path + "\\reads.txt";
-	std::string overlapsfile = path + "\\overlaps.afg";
-
 	ifstream readsMap(path + "\\reads.bnk\\RED.0.map");
 	ifstream readsMap2(path + "\\reads.2k.10x.fasta");
-
-	std::ifstream readinput(readsfile.c_str());
-	for (std::string line; std::getline(readinput, line);)
-	{
-		std::vector<std::string> substrings = split(line, '\t');
-		reads.push_back(substrings[1]);
-	}
-
-	//std::cout << reads.size() << std::endl;
 
 	map<string, int> readMap;
 	for (string line; getline(readsMap, line);)
@@ -77,7 +63,11 @@ int main(int argc, char *argv[])
 			reads.push_back(line);
 		}
 	}
+}
 
+void loadoverlaps()
+{
+	std::string overlapsfile = path + "\\overlaps.afg";
 
 	std::ifstream overlapinput(overlapsfile.c_str());
 	overlap *o = NULL;
@@ -92,8 +82,8 @@ int main(int argc, char *argv[])
 		{
 			string s = line.substr(4);
 			vector<string> reads = split(s, ',');
-			o->read1 = stoi(reads[0])-1;
-			o->read2 = stoi(reads[1])-1;
+			o->read1 = stoi(reads[0]) - 1;
+			o->read2 = stoi(reads[1]) - 1;
 		}
 		else if (line.substr(0, 3) == "ahg")
 		{
@@ -108,6 +98,16 @@ int main(int argc, char *argv[])
 			overlaps.push_back(*o);
 		}
 	}
+}
+
+int main(int argc, char *argv[])
+{
+	path = argv[1];
+
+	
+
+	loadReads();
+	loadoverlaps();
 
 	OverlapGraph overlapGraph(reads, overlaps);
 	overlapGraph.runUnitigging();
