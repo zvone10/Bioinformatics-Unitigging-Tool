@@ -137,19 +137,20 @@ void OverlapGraph::unitigsPrinting()
 	
 	int counter = 1;
 
-	output << "Unitigs{" << endl;
+	output << "{Unitigs" << endl;
 
 	for (Chunk c : collapsedReducedGraph)
 	{
-		output << "\t" << counter << "{" << endl;
-		output << "\t\t members: ";
+		output << "{" << "Unitig" << endl;
+		output << "id: " << counter << endl;
+		output << "members: ";
 		for (int a : c.members)
 		{
-			output << a << " ";
+			output << a << ",";
 		}
 
 		output << endl;
-		output << "\t" << "}" << endl;
+		output << "}" << endl;
 	}
 
 	output << "}" << endl;
