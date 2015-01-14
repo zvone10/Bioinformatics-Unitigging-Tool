@@ -148,6 +148,12 @@ void OverlapGraph::printLayouts()
 			}
 		}
 	}
+
+	output << "{LAY" << endl;
+	for (int i = 0; i < reads.size(); i++)
+	{
+		
+	}
 }
 
 void OverlapGraph::uniqueJoinCollapsing(){
