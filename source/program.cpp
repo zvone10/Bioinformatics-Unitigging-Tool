@@ -35,8 +35,8 @@ std::vector<std::string> split(std::string input, char splitChar)
 
 void loadReads()
 {
-	ifstream readsMap(path + "\\reads.bnk\\RED.0.map");
-	ifstream readsMap2(path + "\\reads.2k.10x.fasta");
+	ifstream readsMap(path + "/reads.bnk/RED.0.map");
+	ifstream readsMap2(path + "/reads.2k.10x.fasta");
 
 	map<string, int> readMap;
 	for (string line; getline(readsMap, line);)
@@ -67,7 +67,7 @@ void loadReads()
 
 void loadoverlaps()
 {
-	std::string overlapsfile = path + "\\overlaps.afg";
+	std::string overlapsfile = path + "/overlaps.afg";
 
 	std::ifstream overlapinput(overlapsfile.c_str());
 	overlap *o = NULL;
