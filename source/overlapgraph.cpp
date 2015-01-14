@@ -12,6 +12,10 @@
 
 using namespace std;
 
+
+/*
+Constructor for OverlapGraph class.
+*/
 OverlapGraph::OverlapGraph(std::vector<std::string> readvector, std::vector<overlap> overlapvector)
 {
 	reads = readvector;
@@ -56,8 +60,15 @@ void OverlapGraph::initialize()
 		if (indegree[i] == 0 & graph[i].size() == 0)
 			nonContainedReads[i] = 0;
 	}
+
+	free(indegree);
 }
 
+/*
+Method that runs untigging after contained reads are eliminated. (Contained reads are marked as eliminated
+while graph was being initialized.
+)
+*/
 void OverlapGraph::runUnitigging()
 {
 	int N = reads.size();
