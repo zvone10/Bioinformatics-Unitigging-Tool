@@ -152,7 +152,13 @@ void OverlapGraph::printLayouts()
 	output << "{LAY" << endl;
 	for (int i = 0; i < reads.size(); i++)
 	{
-		
+		if (nonContainedReads[i]) 
+		{
+			output << "{TLE" << endl;
+			output << "clr:0," << reads[i].length() << endl;
+			output << "off:" << offsets[i] << endl;
+			output << "}" << endl;
+		}
 	}
 }
 
