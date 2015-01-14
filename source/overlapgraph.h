@@ -35,4 +35,5 @@ class OverlapGraph
 		OverlapGraph(std::vector<std::string> reads, std::vector<overlap> overlaps);
 		void runUnitigging();
 		void printLayouts();
+		void unitigsPrinting();
 };

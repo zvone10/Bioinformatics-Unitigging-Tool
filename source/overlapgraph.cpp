@@ -131,6 +131,29 @@ void OverlapGraph::runUnitigging()
 	return;
 }
 
+void OverlapGraph::unitigsPrinting()
+{
+	ofstream output("unitigsPrinting.afg");
+	
+	int counter = 1;
+
+	output << "Unitigs{" << endl;
+
+	for (Chunk c : collapsedReducedGraph)
+	{
+		output << "\t" << counter << "{" << endl;
+		
+		for (int a : c.members)
+		{
+		}
+
+		output << c.members[1] << endl;
+		output << "\t" << "}" << endl;
+	}
+
+	output << "}" << endl;
+}
+
 void OverlapGraph::printLayouts()
 {
 	ofstream output("layouts.afg");
