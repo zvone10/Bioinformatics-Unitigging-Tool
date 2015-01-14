@@ -142,12 +142,13 @@ void OverlapGraph::unitigsPrinting()
 	for (Chunk c : collapsedReducedGraph)
 	{
 		output << "\t" << counter << "{" << endl;
-		
+		output << "\t\t members: ";
 		for (int a : c.members)
 		{
+			output << a << " ";
 		}
 
-		output << c.members[1] << endl;
+		output << endl;
 		output << "\t" << "}" << endl;
 	}
 
