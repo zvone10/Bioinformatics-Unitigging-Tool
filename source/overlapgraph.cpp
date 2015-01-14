@@ -100,7 +100,7 @@ void OverlapGraph::runUnitigging()
 		}
 
 		longest += FUZZ;
-		cout << longest << endl;
+		//cout << longest << endl;
 
 		for (int j = 0; j < graph[I].size(); j++)
 		{
@@ -148,7 +148,7 @@ void OverlapGraph::runUnitigging()
 			if (!reduceflags[i][j] & nonContainedReads[graph[i][j].read1] & nonContainedReads[graph[i][j].read2]){
 				// Add edge to the reduced graph
 				reducedGraph[i].push_back(graph[i][j]);
-				cout << graph[i][j].read1 << " -> " << graph[i][j].read2 << endl;
+				//cout << graph[i][j].read1 << " -> " << graph[i][j].read2 << endl;
 			}
         }
     }

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <time.h>
 #include <map>
 
 #include "overlapgraph.h"
@@ -13,6 +14,9 @@ using namespace std;
 std::string path;
 std::vector<std::string> reads;
 std::vector<overlap> overlaps;
+clock_t start_ts;
+clock_t end_ts;
+
 
 std::vector<std::string> split(std::string input, char splitChar)
 {
@@ -114,13 +118,26 @@ int main(int argc, char *argv[])
 {
 	path = argv[1];
 
-	
+	std::cout << "Loading from files started ... " << endl;
 
 	loadReads();
 	loadoverlaps();
 
+	std::cout << "Loading from files finished ... " << endl;
+
 	OverlapGraph overlapGraph(reads, overlaps);
+	std::cout << "Number of reads: " << reads.size()  << endl;
+
+	std::cout << "Unitigging started ... " << endl;
+	start_ts = clock();
 	overlapGraph.runUnitigging();
+	end_ts = clock();
+
+	cout << (double)(end_ts - start_ts) / CLOCKS_PER_SEC << endl;
+
+	std::cout << "Unitigging finished ... " << endl;
+
+	std::cout << "Dumping to files ... " << endl;
 	overlapGraph.printLayouts();
 	overlapGraph.unitigsPrinting();
 }
