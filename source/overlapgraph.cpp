@@ -40,6 +40,22 @@ void OverlapGraph::initialize()
 		else if (o.ahg <= 0 & o.bhg>=0)
 			nonContainedReads[o.read1] = 0;
 	}
+
+	int *indegree = (int *)malloc(reads.size()*sizeof(int));
+	memset(indegree, 0, reads.size()*sizeof(int));
+	for (int i = 0; i < graph.size(); i++)
+	{
+		for (int j = 0; j < graph[i].size(); j++)
+		{
+			indegree[graph[i][j].read2]++;
+		}
+	}
+
+	for (int i = 0; i < reads.size(); i++)
+	{
+		if (indegree[i] == 0 & graph[i].size() == 0)
+			nonContainedReads[i] = 0;
+	}
 }
 
 void OverlapGraph::runUnitigging()
@@ -125,6 +141,7 @@ void OverlapGraph::runUnitigging()
 			}
         }
     }
+
 	uniqueJoinCollapsing();
 
 	free(vertexstatus);
@@ -137,11 +154,11 @@ void OverlapGraph::unitigsPrinting()
 	
 	int counter = 1;
 
-	output << "{Unitigs" << endl;
+	output << "{unitigs" << endl;
 
 	for (Chunk c : collapsedReducedGraph)
 	{
-		output << "{" << "Unitig" << endl;
+		output << "{" << "unitig" << endl;
 		output << "id: " << counter << endl;
 		output << "members: ";
 		for (int a : c.members)
