@@ -157,9 +157,14 @@ void OverlapGraph::printLayouts()
 			output << "{TLE" << endl;
 			output << "clr:0," << reads[i].length() << endl;
 			output << "off:" << offsets[i] << endl;
+			output << "src:" << i + 1 << endl;
 			output << "}" << endl;
 		}
 	}
+
+	output << "}" << endl;
+
+	free(offsets);
 }
 
 void OverlapGraph::uniqueJoinCollapsing(){
