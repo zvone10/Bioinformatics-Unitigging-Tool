@@ -137,6 +137,14 @@ void OverlapGraph::printLayouts()
 	int *offsets = (int *)malloc(reads.size()*sizeof(int));
 	memset(offsets, 0, reads.size()*sizeof(int));
 
+
+	for (int i = 0; i < reads.size(); i++)
+	{
+		for (int j = 0; j < graph[i].size(); j++)
+		{
+			overlap o = graph[i][j];
+		}
+	}
 }
 
 void OverlapGraph::uniqueJoinCollapsing(){
