@@ -25,9 +25,14 @@ OverlapGraph::OverlapGraph(std::vector<std::string> readvector, std::vector<over
 void OverlapGraph::initialize()
 {
 	graph.resize(reads.size());
+	completeGraph.resize(reads.size());
 	reducedGraph.resize(reads.size());
+
 	nonContainedReads.resize(reads.size());
 	nonContainedReads.assign(reads.size(), 1);
+
+	overlapFlags = (bool *)malloc(sizeof(bool)*reads.size());
+	memset(overlapFlags, 0, sizeof(bool)*reads.size());
 
 	for(int i=0;i<overlaps.size();i++)
 	{
@@ -43,6 +48,10 @@ void OverlapGraph::initialize()
 			nonContainedReads[o.read2] = 0;
 		else if (o.ahg <= 0 & o.bhg>=0)
 			nonContainedReads[o.read1] = 0;
+
+		completeGraph[o.read1].push_back(o);
+		overlapFlags[o.read1] = true;
+		overlapFlags[o.read2] = true;
 	}
 
 	int *indegree = (int *)malloc(reads.size()*sizeof(int));
@@ -148,7 +157,7 @@ void OverlapGraph::runUnitigging()
 			if (!reduceflags[i][j] & nonContainedReads[graph[i][j].read1] & nonContainedReads[graph[i][j].read2]){
 				// Add edge to the reduced graph
 				reducedGraph[i].push_back(graph[i][j]);
-				//cout << graph[i][j].read1 << " -> " << graph[i][j].read2 << endl;
+				cout << graph[i][j].read1 + 1<< " -> " << graph[i][j].read2 + 1<< endl;
 			}
         }
     }
@@ -188,15 +197,17 @@ void OverlapGraph::printLayouts()
 {
 	ofstream output("layouts.afg");
 	ofstream pretty("pretty.afg");
+
+
 	int *offsets = (int *)malloc(reads.size()*sizeof(int));
 	memset(offsets, 0, reads.size()*sizeof(int));
 
 
 	for (int i = 0; i < reads.size(); i++)
 	{
-		for (int j = 0; j < graph[i].size(); j++)
+		for (int j = 0; j < completeGraph[i].size(); j++)
 		{
-			overlap o = graph[i][j];
+			overlap o = completeGraph[i][j];
 			if (nonContainedReads[o.read1] & nonContainedReads[o.read2]) {
 				offsets[o.read2] = offsets[o.read1] + o.ahg;
 			}
@@ -206,18 +217,16 @@ void OverlapGraph::printLayouts()
 	output << "{LAY" << endl;
 	for (int i = 0; i < reads.size(); i++)
 	{
-		if (nonContainedReads[i]) 
-		{
+		if (overlapFlags[i]){
 			output << "{TLE" << endl;
 			output << "clr:0," << reads[i].length() << endl;
 			output << "off:" << offsets[i] << endl;
 			output << "src:" << i + 1 << endl;
 			output << "}" << endl;
-
-			pretty << string(offsets[i], ' ') + reads[i] << endl;
-			//pretty <<reads[i] << endl;
-
 		}
+
+			//pretty << string(offsets[i], ' ') + reads[i] << endl;
+			//pretty <<reads[i] << endl;
 	}
 
 	output << "}" << endl;

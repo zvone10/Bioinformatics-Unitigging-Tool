@@ -21,10 +21,12 @@ class OverlapGraph
 		std::vector<std::string> reads;
 		std::vector<overlap> overlaps;
 		std::vector<int> nonContainedReads;
+		std::vector< std::vector<overlap> > completeGraph;
 		std::vector< std::vector<overlap> > graph;
 		std::vector< std::vector<overlap> > reducedGraph;
 		std::vector< Chunk > collapsedReducedGraph;
 		std::vector<int> reducedGraphVertexReferenceCounter;
+		bool *overlapFlags;
 		void initialize();
 		void containedReadRemoval();
 		void transitiveEdgeRemoval();
