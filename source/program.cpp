@@ -17,7 +17,9 @@ std::vector<overlap> overlaps;
 clock_t start_ts;
 clock_t end_ts;
 
-
+/**
+Method returns vector of strings that contains the substrings in isntance of input that are delimited by some character
+*/
 std::vector<std::string> split(std::string input, char splitChar)
 {
 	std::vector<std::string> substrings;
@@ -37,8 +39,8 @@ std::vector<std::string> split(std::string input, char splitChar)
 	return substrings;
 }
 
-/*
-Method that loads reads from FASTA file which is produced with ReadSim and 
+/**
+Method loads reads from FASTA file which is produced with ReadSim.
 */
 void loadReads()
 {
@@ -72,7 +74,7 @@ void loadReads()
 	}
 }
 
-/*
+/**
 Method loads overlaps from file overlaps.afg, which is produced by Minimus. Target file is in afg format
 and collection of overlaps is populated.
 */

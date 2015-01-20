@@ -11,7 +11,7 @@
 #define VERTEX_ELIMINATED -1
 #define FUZZ 10
 
-using namespace std;
+
 
 
 /*
@@ -25,20 +25,20 @@ OverlapGraph::OverlapGraph(std::vector<std::string> readvector, std::vector<over
 
 void OverlapGraph::initialize()
 {
-	graph.resize(reads.size());
-	completeGraph.resize(reads.size());
-	reducedGraph.resize(reads.size());
+	int num_of_reads = reads.size();
+	graph.resize(num_of_reads);
+	completeGraph.resize(num_of_reads);
+	reducedGraph.resize(num_of_reads);
 
-	nonContainedReads.resize(reads.size());
-	nonContainedReads.assign(reads.size(), 1);
+	nonContainedReads.resize(num_of_reads);
+	nonContainedReads.assign(num_of_reads, 1);
 
-	overlapFlags = (bool *)malloc(sizeof(bool)*reads.size());
-	memset(overlapFlags, 0, sizeof(bool)*reads.size());
+	overlap_flags = (bool *)malloc(num_of_reads*sizeof(bool));
+	memset(overlap_flags, 0, num_of_reads*sizeof(bool));
 
 	for(int i=0;i<overlaps.size();i++)
 	{
 		overlap o = overlaps[i];
-
 
 		//removing contained reads
 		if(o.ahg > 0 & o.bhg > 0)
@@ -51,12 +51,12 @@ void OverlapGraph::initialize()
 			nonContainedReads[o.read1] = 0;
 
 		completeGraph[o.read1].push_back(o);
-		overlapFlags[o.read1] = true;
-		overlapFlags[o.read2] = true;
+		overlap_flags[o.read1] = true;
+		overlap_flags[o.read2] = true;
 	}
 
-	int *indegree = (int *)malloc(reads.size()*sizeof(int));
-	memset(indegree, 0, reads.size()*sizeof(int));
+	int *indegree = (int *)malloc(num_of_reads*sizeof(int));
+	memset(indegree, 0, num_of_reads*sizeof(int));
 	for (int i = 0; i < graph.size(); i++)
 	{
 		for (int j = 0; j < graph[i].size(); j++)
@@ -74,15 +74,12 @@ void OverlapGraph::initialize()
 	free(indegree);
 }
 
-/*
-Method that runs untigging after contained reads are eliminated. (Contained reads are marked as eliminated
-while graph was being initialized.
-)
-*/
+//////////////////////////////////////////////////////////////////////////////
+
 void OverlapGraph::runUnitigging()
 {
+	using namespace std;
 	int N = reads.size();
-
 	
 	initialize();
 
@@ -169,8 +166,12 @@ void OverlapGraph::runUnitigging()
 	return;
 }
 
+
+
 void OverlapGraph::unitigsPrinting()
 {
+	using namespace std;
+
 	ofstream output("unitigsPrinting.afg");
 	
 	int counter = 1;
@@ -196,6 +197,8 @@ void OverlapGraph::unitigsPrinting()
 
 void OverlapGraph::printLayouts()
 {
+	using namespace std;
+
 	ofstream output("layouts.afg");
 
 	int *offsets = (int *)malloc(reads.size()*sizeof(int));
@@ -206,7 +209,7 @@ void OverlapGraph::printLayouts()
 	output << "{LAY" << endl;
 	for (int i = 0; i < reads.size(); i++)
 	{
-		if (overlapFlags[i]){
+		if (overlap_flags[i]){
 			output << "{TLE" << endl;
 			output << "clr:0," << reads[i].length() << endl;
 			output << "off:" << offsets[i] << endl;
@@ -224,7 +227,12 @@ void OverlapGraph::printLayouts()
 
 void OverlapGraph::calculateOffsets(int *offsets)
 {
+	//array that stores id of non-containted read to which 
+	//contained read is mapped. mapping[19] = 14 means that 
+	//contained read 19 is mapped to non-contained read 14.
 	int *mapping = (int *)malloc(reads.size()*sizeof(int));
+
+	//smallest right overhang for contained read
 	int *bhglen = (int *)malloc(reads.size()*sizeof(int));
 	memset(mapping, -1, reads.size() * sizeof(int));
 
@@ -234,10 +242,12 @@ void OverlapGraph::calculateOffsets(int *offsets)
 		{
 			overlap o = completeGraph[i][j];
 			if (nonContainedReads[o.read1] & nonContainedReads[o.read2]) {
+				//calculating offset for non-contained reads that are part of final contig.
 				offsets[o.read2] = offsets[o.read1] + o.ahg;
 			}
 			else if (nonContainedReads[o.read1] & !nonContainedReads[o.read2])
 			{
+				//mapping contained read to smallest right overhang
 				if ((mapping[o.read2] == -1 || abs(o.bhg) < bhglen[o.read2]) && o.bhg <= 0)
 				{
 					mapping[o.read2] = o.read1;
@@ -249,7 +259,7 @@ void OverlapGraph::calculateOffsets(int *offsets)
 
 	for (int i = 0; i < reads.size(); i++)
 	{
-		if (!nonContainedReads[i] && overlapFlags[i])
+		if (!nonContainedReads[i] && overlap_flags[i])
 		{
 			int m = mapping[i];
 			overlap *o = find_overlap(mapping[i], i);
