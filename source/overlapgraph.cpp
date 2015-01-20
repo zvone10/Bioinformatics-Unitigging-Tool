@@ -197,13 +197,12 @@ void OverlapGraph::unitigsPrinting()
 void OverlapGraph::printLayouts()
 {
 	ofstream output("layouts.afg");
-	ofstream pretty("pretty.afg");
-
 
 	int *offsets = (int *)malloc(reads.size()*sizeof(int));
 	memset(offsets, 0, reads.size()*sizeof(int));
 
 	int *mapping = (int *)malloc(reads.size()*sizeof(int));
+	//int mapping[200];
 	int *bhglen = (int *)malloc(reads.size()*sizeof(int));
 	memset(mapping, -1, reads.size() * sizeof(int));
 
@@ -218,7 +217,7 @@ void OverlapGraph::printLayouts()
 			}
 			else if (nonContainedReads[o.read1] & !nonContainedReads[o.read2])
 			{
-				if (mapping[o.read2] == -1 || abs(o.bhg) < bhglen[o.read2])
+				if ((mapping[o.read2] == -1 || abs(o.bhg) < bhglen[o.read2]) && o.bhg <= 0)
 				{
 					mapping[o.read2] = o.read1;
 					bhglen[o.read2] = abs(o.bhg);
@@ -252,9 +251,6 @@ void OverlapGraph::printLayouts()
 			output << "src:" << i + 1 << endl;
 			output << "}" << endl;
 		}
-
-			//pretty << string(offsets[i], ' ') + reads[i] << endl;
-			//pretty <<reads[i] << endl;
 	}
 
 	output << "}" << endl;
