@@ -201,11 +201,32 @@ void OverlapGraph::printLayouts()
 	int *offsets = (int *)malloc(reads.size()*sizeof(int));
 	memset(offsets, 0, reads.size()*sizeof(int));
 
+	calculateOffsets(offsets);
+
+	output << "{LAY" << endl;
+	for (int i = 0; i < reads.size(); i++)
+	{
+		if (overlapFlags[i]){
+			output << "{TLE" << endl;
+			output << "clr:0," << reads[i].length() << endl;
+			output << "off:" << offsets[i] << endl;
+			output << "src:" << i + 1 << endl;
+			output << "}" << endl;
+		}
+	}
+
+	output << "}" << endl;
+	output.close();
+
+	free(offsets);
+}
+
+
+void OverlapGraph::calculateOffsets(int *offsets)
+{
 	int *mapping = (int *)malloc(reads.size()*sizeof(int));
-	//int mapping[200];
 	int *bhglen = (int *)malloc(reads.size()*sizeof(int));
 	memset(mapping, -1, reads.size() * sizeof(int));
-
 
 	for (int i = 0; i < reads.size(); i++)
 	{
@@ -231,32 +252,20 @@ void OverlapGraph::printLayouts()
 		if (!nonContainedReads[i] && overlapFlags[i])
 		{
 			int m = mapping[i];
-
-			overlap *o = NULL;
-			for (int j = 0; j < completeGraph[m].size(); j++)
-				if (completeGraph[m][j].read2 == i)
-					o = &completeGraph[m][j];
-
+			overlap *o = find_overlap(mapping[i], i);
 			offsets[i] = offsets[m] + o->ahg;
 		}
 	}
 
-	output << "{LAY" << endl;
-	for (int i = 0; i < reads.size(); i++)
-	{
-		if (overlapFlags[i]){
-			output << "{TLE" << endl;
-			output << "clr:0," << reads[i].length() << endl;
-			output << "off:" << offsets[i] << endl;
-			output << "src:" << i + 1 << endl;
-			output << "}" << endl;
-		}
-	}
+	free(mapping);
+	free(bhglen);
+}
 
-	output << "}" << endl;
-	output.close();
-
-	free(offsets);
+overlap* OverlapGraph::find_overlap(int read1, int read2)
+{
+	for (int j = 0; j < completeGraph[read1].size(); j++)
+		if (completeGraph[read1][j].read2 == read2)
+			return &completeGraph[read1][j];
 }
 
 void OverlapGraph::uniqueJoinCollapsing(){

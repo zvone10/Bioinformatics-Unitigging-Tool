@@ -28,11 +28,11 @@ class OverlapGraph
 		std::vector<int> reducedGraphVertexReferenceCounter;
 		bool *overlapFlags;
 		void initialize();
-		void containedReadRemoval();
-		void transitiveEdgeRemoval();
 		void uniqueJoinCollapsing();
 		void calculateChunks(int chunkStartingVertexId);
 		bool vertexAlreadyInChunk(int vertexId);
+		void calculateOffsets(int *offsets);
+		overlap* find_overlap(int read1, int read2);
 	public:
 		OverlapGraph(std::vector<std::string> reads, std::vector<overlap> overlaps);
 		void runUnitigging();
