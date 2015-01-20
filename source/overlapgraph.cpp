@@ -2,6 +2,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include <fstream>
 #include "overlapgraph.h"
 
@@ -202,6 +203,10 @@ void OverlapGraph::printLayouts()
 	int *offsets = (int *)malloc(reads.size()*sizeof(int));
 	memset(offsets, 0, reads.size()*sizeof(int));
 
+	int *mapping = (int *)malloc(reads.size()*sizeof(int));
+	int *bhglen = (int *)malloc(reads.size()*sizeof(int));
+	memset(mapping, -1, reads.size() * sizeof(int));
+
 
 	for (int i = 0; i < reads.size(); i++)
 	{
@@ -211,6 +216,29 @@ void OverlapGraph::printLayouts()
 			if (nonContainedReads[o.read1] & nonContainedReads[o.read2]) {
 				offsets[o.read2] = offsets[o.read1] + o.ahg;
 			}
+			else if (nonContainedReads[o.read1] & !nonContainedReads[o.read2])
+			{
+				if (mapping[o.read2] == -1 || abs(o.bhg) < bhglen[o.read2])
+				{
+					mapping[o.read2] = o.read1;
+					bhglen[o.read2] = abs(o.bhg);
+				}
+			}
+		}
+	}
+
+	for (int i = 0; i < reads.size(); i++)
+	{
+		if (!nonContainedReads[i] && overlapFlags[i])
+		{
+			int m = mapping[i];
+
+			overlap *o = NULL;
+			for (int j = 0; j < completeGraph[m].size(); j++)
+				if (completeGraph[m][j].read2 == i)
+					o = &completeGraph[m][j];
+
+			offsets[i] = offsets[m] + o->ahg;
 		}
 	}
 
