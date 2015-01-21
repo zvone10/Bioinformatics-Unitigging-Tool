@@ -148,6 +148,7 @@ void OverlapGraph::runUnitigging()
 		}
 	}
 
+	cout << "Vertices and edges in unitig:" << endl;
 	for(int i=0;i<graph.size();i++)
     {
         for(int j=0;j<graph[i].size();j++)
@@ -172,7 +173,7 @@ void OverlapGraph::unitigsPrinting()
 {
 	using namespace std;
 
-	ofstream output("unitigsPrinting.afg");
+	ofstream output("unitigs.afg");
 	
 	int counter = 1;
 
@@ -183,16 +184,19 @@ void OverlapGraph::unitigsPrinting()
 		output << "{" << "unitig" << endl;
 		output << "id: " << counter << endl;
 		output << "members: ";
-		for (int a : c.members)
+		for (int i = 0; i < c.members.size();i++)
 		{
-			output << a << ",";
+			if (i < c.members.size() - 1)
+				output << c.members[i] + 1 << ",";
+			else
+				output << c.members[i] + 1 << endl;
 		}
-
-		output << endl;
 		output << "}" << endl;
+		counter++;
 	}
 
 	output << "}" << endl;
+	output.close();
 }
 
 void OverlapGraph::printLayouts()
